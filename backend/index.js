@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+
 exports.handler = async (event) => {
     const searchQuery = event.queryStringParameters ? event.queryStringParameters.searchQuery : null;
 
