@@ -9,6 +9,7 @@
             color: #555;
             font-size: 1rem; /* Ajusta este valor según tus preferencias */
         }
+
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
@@ -79,8 +80,8 @@
         const loadingLabel = document.getElementById('loadingLabel');
         loadingLabel.style.display = 'inline';
 
-        // Make a GET request to the server endpoint
-        fetch(`http://localhost:3000/searchYouTube?searchQuery=${encodeURIComponent(searchQuery)}`)
+        let baseUrl = "https://tb5zdikryh.execute-api.us-east-1.amazonaws.com/url"
+        fetch(baseUrl + `?searchQuery=${encodeURIComponent(searchQuery)}`)
             .then(response => response.json())
             .then(data => {
                 // Open the received URL in a new window
