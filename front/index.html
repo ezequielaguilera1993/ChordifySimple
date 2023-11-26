@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #loadingLabel {
+            display: none;
+            color: #555;
+            font-size: 1rem; /* Ajusta este valor según tus preferencias */
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        label {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #loadingLabel {
+            display: none;
+            color: #555;
+            font-size: 1.2rem;
+        }
+    </style>
+    <title>YouTube Search</title>
+</head>
+<body>
+<h1>Chordify Pro</h1>
+<label for="searchQuery">Poné el video de youtube que quieras buscar para pasarcelo a Chordify</label>
+<input type="text" id="searchQuery" placeholder="La balsa" onkeydown="handleEnterKey(event)">
+<button onclick="searchYouTube()">Do the magic</button>
+<label id="loadingLabel">Yendoo...</label>
+<script>
+    function searchYouTube() {
+        const searchQuery = document.getElementById('searchQuery').value;
+        if (!searchQuery || searchQuery.trim() === '') {
+            alert('Please enter a valid search query.');
+            return;
+        }
+
+        // Show the loading label
+        const loadingLabel = document.getElementById('loadingLabel');
+        loadingLabel.style.display = 'inline';
+
+        // Make a GET request to the server endpoint
+        fetch(`http://localhost:3000/searchYouTube?searchQuery=${encodeURIComponent(searchQuery)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Open the received URL in a new window
+                window.open(data.url, '_blank');
+            })
+            .catch(error => {
+                console.error(error);
+                alert('An error occurred while processing the request.');
+            })
+            .finally(() => {
+                // Hide the loading label after some time (e.g., 1 second)
+                setTimeout(() => {
+                    loadingLabel.style.display = 'none';
+                }, 1000);
+            });
+    }
+
+    function handleEnterKey(event) {
+        if (event.key === 'Enter') {
+            // If the Enter key is pressed, trigger the searchYouTube function
+            searchYouTube();
+        }
+    }
+</script>
+</body>
+</html>
