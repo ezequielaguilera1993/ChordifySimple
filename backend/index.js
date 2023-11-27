@@ -1,13 +1,12 @@
 require('dotenv').config();
 
-
 exports.handler = async (event) => {
     const searchQuery = event.queryStringParameters ? event.queryStringParameters.searchQuery : null;
 
     if (!searchQuery || searchQuery.trim() === '') {
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: 'Please enter a valid search query.' }),
+            body: JSON.stringify({error: 'Please enter a valid search query.'}),
         };
     }
 
@@ -15,7 +14,17 @@ exports.handler = async (event) => {
 
     try {
         const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&q=${encodeURIComponent(searchQuery)}&type=video&maxResults=1`);
+
+
         const data = await response.json();
+
+        if (data.error !== undefined) {
+            return {
+                statusCode: 500,
+                body: {"error":data.error.message},
+            };
+        }
+
 
         if (data.items.length === 0) {
             throw new Error('No videos found in search');
@@ -30,7 +39,7 @@ exports.handler = async (event) => {
             console.log("La cancion está chordificada, se procede a abrir la pagina");
             return {
                 statusCode: 200,
-                body: JSON.stringify({ url: tentativeAlreadyChordifiedSong }),
+                body: JSON.stringify({url: tentativeAlreadyChordifiedSong}),
             };
         }
 
@@ -41,7 +50,7 @@ exports.handler = async (event) => {
             const searchUrl = `https://chordify.net/search/${youtubeUrlEscaped}`;
             return {
                 statusCode: 200,
-                body: JSON.stringify({ url: searchUrl }),
+                body: JSON.stringify({url: searchUrl}),
             };
         }
 
@@ -49,10 +58,10 @@ exports.handler = async (event) => {
         return await checkChordifyStatus(tentativeAlreadyChordifiedSong, onSuccess, onError);
 
     } catch (error) {
-        console.error(error);
+        console.error("error: ", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Internal Server Error handled in lambda' }),
+            body: error.message,
         };
     }
 };
